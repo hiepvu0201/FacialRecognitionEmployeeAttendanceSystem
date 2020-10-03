@@ -33,7 +33,7 @@ public class PayslipController {
     public Payslips create(@Validated @RequestBody Payslips Payslips) throws Exception{
         Date daypay = Payslips.getPayDate();
         if(daypay!=null&&!"".equals(daypay)){
-            Payslips temppayslipName = payslipRepository.findByPayDay(daypay);
+            Payslips temppayslipName = payslipRepository.findByPayDate(daypay);
             if(temppayslipName!=null){
                 throw new Exception("payslip date check: "+daypay+" is already exist");
             }

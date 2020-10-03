@@ -32,7 +32,7 @@ public class UserController {
     public Users create(@Validated @RequestBody Users Users) throws Exception{
         String userFullName = Users.getFullName();
         if(userFullName!=null&&!"".equals(userFullName)){
-            Users tempUserFullName = userRepository.findByUserFullName(userFullName);
+            Users tempUserFullName = userRepository.findByFullName(userFullName);
             if(tempUserFullName!=null){
                 throw new Exception("user name: "+userFullName+" is already exist");
             }

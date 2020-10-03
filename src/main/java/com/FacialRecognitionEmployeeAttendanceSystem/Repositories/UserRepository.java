@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Repository
 @CrossOrigin(origins = "*")
 public interface UserRepository extends JpaRepository<Users, Long> {
-    public Users findByUserFullName(String userName);
+    public Users findByFullName(String userName);
 }

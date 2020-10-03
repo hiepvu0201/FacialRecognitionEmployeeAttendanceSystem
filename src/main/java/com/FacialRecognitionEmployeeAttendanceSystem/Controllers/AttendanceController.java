@@ -33,7 +33,7 @@ public class AttendanceController {
     public Attendances create(@Validated @RequestBody Attendances Attendances) throws Exception{
         Date dateCheck = Attendances.getDateCheck();
         if(dateCheck!=null&&!"".equals(dateCheck)){
-            Attendances tempattendanceName = attendanceRepository.findByAttendanceDateCheck(dateCheck);
+            Attendances tempattendanceName = attendanceRepository.findByDateCheck(dateCheck);
             if(tempattendanceName!=null){
                 throw new Exception("attendance date check: "+dateCheck+" is already exist");
             }

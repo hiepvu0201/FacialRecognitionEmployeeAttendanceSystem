@@ -10,5 +10,5 @@ import java.sql.Date;
 @Repository
 @CrossOrigin(origins = "*")
 public interface PayslipRepository extends JpaRepository<Payslips, Long> {
-    public Payslips findByPayDay(Date day);
+    public Payslips findByPayDate(Date day);
 }
