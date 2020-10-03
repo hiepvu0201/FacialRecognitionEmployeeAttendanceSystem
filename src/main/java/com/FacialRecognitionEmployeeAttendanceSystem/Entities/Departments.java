@@ -23,7 +23,7 @@ public class Departments {
     private long id;
 
     @Column(name = "department_name", nullable = false, unique = true)
-    private String shiftName;
+    private String departmentName;
 
     @Column(name = "shift_id", nullable = false)
     public long shiftId;
