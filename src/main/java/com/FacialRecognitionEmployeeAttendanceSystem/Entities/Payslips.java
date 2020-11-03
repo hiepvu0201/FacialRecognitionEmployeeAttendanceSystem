@@ -56,6 +56,6 @@ public class Payslips {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_active", columnDefinition = "bit default 0")
-    private boolean isActive;
+    @Column(name = "is_disabled", columnDefinition = "bit default 0")
+    private boolean isDisabled;
 }

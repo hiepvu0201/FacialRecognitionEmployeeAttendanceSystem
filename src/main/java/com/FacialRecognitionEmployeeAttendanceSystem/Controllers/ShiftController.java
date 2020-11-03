@@ -47,10 +47,14 @@ public class ShiftController {
         Shifts shift = shiftRepository.findById(shiftId)
                 .orElseThrow(() -> new ResourceNotFoundException("This shift not found on:" + shiftId));
 
-        boolean isActive = shift.isActive();
-        if(isActive==false){
+        boolean isDisabled = shift.isDisabled();
+        if(isDisabled==true){
             throw new Exception("This shift has already been disabled!");
         }
+
+        shift.setShiftName(shiftDetails.getShiftName());
+        shift.setTimeStart(shiftDetails.getTimeStart());
+        shift.setTimeEnd(shift.getTimeEnd());
 
         final Shifts updateshift = shiftRepository.save(shiftDetails);
 
@@ -63,12 +67,12 @@ public class ShiftController {
         Shifts Shifts = shiftRepository.findById(shiftId)
                 .orElseThrow(() -> new ResourceNotFoundException("shift not found on: " + shiftId));
 
-        boolean isActive = Shifts.isActive();
-        if(isActive==false)
+        boolean isDisabled = Shifts.isDisabled();
+        if(isDisabled==true)
         {
             throw new Exception("shift has already been disabled!");
         }
-        Shifts.setActive(false);
+        Shifts.setDisabled(true);
         final Shifts updateshift = shiftRepository.save(Shifts);
 
         return ResponseEntity.ok(updateshift);
@@ -80,12 +84,12 @@ public class ShiftController {
         Shifts Shifts = shiftRepository.findById(shiftId)
                 .orElseThrow(() -> new ResourceNotFoundException("shift not found on:" + shiftId));
 
-        boolean isActive = Shifts.isActive();
-        if(isActive==true)
+        boolean isDisabled = Shifts.isDisabled();
+        if(isDisabled==false)
         {
             throw new Exception("shift has not been disabled yet!");
         }
-        Shifts.setActive(true);
+        Shifts.setDisabled(false);
         final Shifts updateshift = shiftRepository.save(Shifts);
 
         return ResponseEntity.ok(updateshift);

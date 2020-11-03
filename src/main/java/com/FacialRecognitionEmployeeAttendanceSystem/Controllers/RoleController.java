@@ -48,10 +48,9 @@ public class RoleController {
         Roles role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("This role not found on:" + roleId));
 
-        boolean isActive = role.isActive();
-        if(isActive==false){
-            throw new Exception("This role has already been disabled!");
-        }
+        role.setRoleName(roleDetails.getRoleName());
+        role.setNote(roleDetails.getNote());
+        role.setDescription(roleDetails.getDescription());
 
         final Roles updateRole = roleRepository.save(roleDetails);
 
@@ -64,12 +63,12 @@ public class RoleController {
         Roles Roles = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found on: " + roleId));
 
-        boolean isActive = Roles.isActive();
-        if(isActive==false)
+        boolean isDisabled = Roles.isDisabled();
+        if(isDisabled==true)
         {
             throw new Exception("Role has already been disabled!");
         }
-        Roles.setActive(false);
+        Roles.setDisabled(true);
         final Roles updateRole = roleRepository.save(Roles);
 
         return ResponseEntity.ok(updateRole);
@@ -81,12 +80,12 @@ public class RoleController {
         Roles Roles = roleRepository.findById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found on:" + roleId));
 
-        boolean isActive = Roles.isActive();
-        if(isActive==true)
+        boolean isDisabled = Roles.isDisabled();
+        if(isDisabled==false)
         {
             throw new Exception("Role has not been disabled yet!");
         }
-        Roles.setActive(true);
+        Roles.setDisabled(false);
         final Roles updateRole = roleRepository.save(Roles);
 
         return ResponseEntity.ok(updateRole);

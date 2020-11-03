@@ -3,6 +3,7 @@ package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Departments;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.DepartmentRepository;
+import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.ShiftRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,9 @@ public class DepartmentController {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Autowired
+    private ShiftRepository shiftRepository;
+
     @GetMapping("/")
     public List<Departments> getAllDepartments(){
         return departmentRepository.findAll();
@@ -29,15 +33,19 @@ public class DepartmentController {
     }
 
     @PostMapping("/add")
-    public Departments create(@Validated @RequestBody Departments Departments) throws Exception{
-        String departmentName = Departments.getDepartmentName();
+    public Departments create(@Validated @RequestBody Departments departments) throws Exception{
+        String departmentName = departments.getDepartmentName();
         if(departmentName!=null&&!"".equals(departmentName)){
             Departments tempdepartmentName = departmentRepository.findByDepartmentName(departmentName);
             if(tempdepartmentName!=null){
                 throw new Exception("department name: "+departmentName+" is already exist");
             }
         }
-        return departmentRepository.save(Departments);
+
+        departments.setShifts(shiftRepository.findById(departments.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + departments.getShiftId())));
+
+        return departmentRepository.save(departments);
     }
 
     @PutMapping("/update/{id}")
@@ -47,10 +55,15 @@ public class DepartmentController {
         Departments department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("This department not found on:" + departmentId));
 
-        boolean isActive = department.isActive();
-        if(isActive==false){
+        boolean isDisabled = department.isDisabled();
+        if(isDisabled==false){
             throw new Exception("This department has already been disabled!");
         }
+
+        department.setDepartmentName(departmentDetails.getDepartmentName());
+        department.setShiftId(departmentDetails.getShiftId());
+        department.setShifts(shiftRepository.findById(departmentDetails.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + departmentDetails.getShiftId())));
 
         final Departments updatedepartment = departmentRepository.save(departmentDetails);
 
@@ -63,12 +76,12 @@ public class DepartmentController {
         Departments Departments = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("department not found on: " + departmentId));
 
-        boolean isActive = Departments.isActive();
-        if(isActive==false)
+        boolean isDisabled = Departments.isDisabled();
+        if(isDisabled==true)
         {
             throw new Exception("department has already been disabled!");
         }
-        Departments.setActive(false);
+        Departments.setDisabled(true);
         final Departments updatedepartment = departmentRepository.save(Departments);
 
         return ResponseEntity.ok(updatedepartment);
@@ -80,12 +93,12 @@ public class DepartmentController {
         Departments Departments = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("department not found on:" + departmentId));
 
-        boolean isActive = Departments.isActive();
-        if(isActive==true)
+        boolean isDisabled = Departments.isDisabled();
+        if(isDisabled==false)
         {
             throw new Exception("department has not been disabled yet!");
         }
-        Departments.setActive(true);
+        Departments.setDisabled(false);
         final Departments updatedepartment = departmentRepository.save(Departments);
 
         return ResponseEntity.ok(updatedepartment);

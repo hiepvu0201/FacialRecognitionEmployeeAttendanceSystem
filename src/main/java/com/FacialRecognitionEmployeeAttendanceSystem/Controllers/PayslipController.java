@@ -48,10 +48,21 @@ public class PayslipController {
         Payslips payslip = payslipRepository.findById(payslipId)
                 .orElseThrow(() -> new ResourceNotFoundException("This payslip not found on:" + payslipId));
 
-        boolean isActive = payslip.isActive();
-        if(isActive==false){
+        boolean isDisabled = payslip.isDisabled();
+        if(isDisabled==false){
             throw new Exception("This payslip has already been disabled!");
         }
+
+        payslip.setPayDate(payslipDetails.getPayDate());
+        payslip.setWorkingSalary(payslipDetails.getWorkingSalary());
+        payslip.setPublicSalary(payslipDetails.getPublicSalary());
+        payslip.setOtherSalary(payslipDetails.getOtherSalary());
+        payslip.setAnnualLeaveSalary(payslipDetails.getAnnualLeaveSalary());
+        payslip.setOvertimeSalary(payslipDetails.getOvertimeSalary());
+        payslip.setAllowance(payslipDetails.getAllowance());
+        payslip.setBonus(payslipDetails.getBonus());
+        payslip.setTax(payslipDetails.getTax());
+        payslip.setDeductionSalary(payslipDetails.getDeductionSalary());
 
         final Payslips updatepayslip = payslipRepository.save(payslipDetails);
 
@@ -64,12 +75,12 @@ public class PayslipController {
         Payslips Payslips = payslipRepository.findById(payslipId)
                 .orElseThrow(() -> new ResourceNotFoundException("payslip not found on: " + payslipId));
 
-        boolean isActive = Payslips.isActive();
-        if(isActive==false)
+        boolean isDisabled = Payslips.isDisabled();
+        if(isDisabled==true)
         {
             throw new Exception("payslip has already been disabled!");
         }
-        Payslips.setActive(false);
+        Payslips.setDisabled(true);
         final Payslips updatepayslip = payslipRepository.save(Payslips);
 
         return ResponseEntity.ok(updatepayslip);
@@ -81,12 +92,12 @@ public class PayslipController {
         Payslips Payslips = payslipRepository.findById(payslipId)
                 .orElseThrow(() -> new ResourceNotFoundException("payslip not found on:" + payslipId));
 
-        boolean isActive = Payslips.isActive();
-        if(isActive==true)
+        boolean isDisabled = Payslips.isDisabled();
+        if(isDisabled==false)
         {
             throw new Exception("payslip has not been disabled yet!");
         }
-        Payslips.setActive(true);
+        Payslips.setDisabled(false);
         final Payslips updatepayslip = payslipRepository.save(Payslips);
 
         return ResponseEntity.ok(updatepayslip);

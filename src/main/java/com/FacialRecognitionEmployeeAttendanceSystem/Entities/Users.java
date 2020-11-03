@@ -1,5 +1,6 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Time;
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Getter
@@ -33,7 +34,8 @@ public class Users {
     private String pin;
 
     @Column(name = "dob", nullable = false)
-    private Time dob;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date dob;
 
     @Column(name = "home_address", nullable = false)
     private String homeAddress;
@@ -52,8 +54,8 @@ public class Users {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_active", columnDefinition = "bit default 0")
-    private boolean isActive;
+    @Column(name = "is_disabled", columnDefinition = "bit default 0")
+    private boolean isDisabled;
 
     @Column(name = "department_id", nullable = false)
     public long departmentId;

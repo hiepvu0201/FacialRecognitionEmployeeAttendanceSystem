@@ -31,13 +31,10 @@ public class Shifts {
     @Column(name = "time_end", nullable = false)
     private Time timeEnd;
 
-    @Column(name = "is_nightshift", nullable = false, columnDefinition = "bit default 0")
-    private double isNightShift;
-
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_active", columnDefinition = "bit default 0")
-    private boolean isActive;
+    @Column(name = "is_disabled", columnDefinition = "bit default 0")
+    private boolean isDisabled;
 }

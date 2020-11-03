@@ -21,7 +21,7 @@ public class Roles {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "role_name", nullable = false, unique = true)
+    @Column(name = "role_name", nullable = false)
     private String roleName;
 
     @Lob
@@ -36,6 +36,6 @@ public class Roles {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_active", columnDefinition = "bit default 0")
-    private boolean isActive;
+    @Column(name = "is_disabled", columnDefinition = "bit default 0")
+    private boolean isDisabled;
 }

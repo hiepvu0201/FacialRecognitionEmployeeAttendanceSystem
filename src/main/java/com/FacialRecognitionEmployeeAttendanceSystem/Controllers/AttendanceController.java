@@ -48,10 +48,15 @@ public class AttendanceController {
         Attendances attendance = attendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("This attendance not found on:" + attendanceId));
 
-        boolean isActive = attendance.isActive();
-        if(isActive==false){
+        boolean isDisabled = attendance.isDisabled();
+        if(isDisabled==false){
             throw new Exception("This attendance has already been disabled!");
         }
+
+        attendance.setDateCheck(attendanceDetails.getDateCheck());
+        attendance.setStatus(attendanceDetails.getStatus());
+        attendance.setNote(attendanceDetails.getNote());
+        attendance.setWorkingHours(attendanceDetails.getWorkingHours());
 
         final Attendances updateattendance = attendanceRepository.save(attendanceDetails);
 
@@ -64,12 +69,12 @@ public class AttendanceController {
         Attendances Attendances = attendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("attendance not found on: " + attendanceId));
 
-        boolean isActive = Attendances.isActive();
-        if(isActive==false)
+        boolean isDisabled = Attendances.isDisabled();
+        if(isDisabled==true)
         {
             throw new Exception("attendance has already been disabled!");
         }
-        Attendances.setActive(false);
+        Attendances.setDisabled(true);
         final Attendances updateattendance = attendanceRepository.save(Attendances);
 
         return ResponseEntity.ok(updateattendance);
@@ -81,12 +86,12 @@ public class AttendanceController {
         Attendances Attendances = attendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("attendance not found on:" + attendanceId));
 
-        boolean isActive = Attendances.isActive();
-        if(isActive==true)
+        boolean isDisabled = Attendances.isDisabled();
+        if(isDisabled==false)
         {
             throw new Exception("attendance has not been disabled yet!");
         }
-        Attendances.setActive(true);
+        Attendances.setDisabled(false);
         final Attendances updateattendance = attendanceRepository.save(Attendances);
 
         return ResponseEntity.ok(updateattendance);
