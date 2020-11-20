@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -102,5 +104,15 @@ public class DepartmentController {
         final Departments updatedepartment = departmentRepository.save(Departments);
 
         return ResponseEntity.ok(updatedepartment);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long departmentId) throws
+            Exception {
+        Departments department = departmentRepository.findById(departmentId).orElseThrow(() -> new ResourceNotFoundException("Departments not found on: " + departmentId));
+        departmentRepository.delete(department);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

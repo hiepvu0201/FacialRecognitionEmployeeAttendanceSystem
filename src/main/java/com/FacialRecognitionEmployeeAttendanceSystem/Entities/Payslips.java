@@ -40,6 +40,7 @@ public class Payslips {
     @Column(name = "overtimve_salary", nullable = false, columnDefinition="Decimal(19,4)")
     private double overtimeSalary;
 
+    // phu cap
     @Column(name = "allowance", nullable = false)
     private int allowance;
 

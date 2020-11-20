@@ -1,6 +1,7 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Payslips;
+import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.PayslipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -101,5 +104,15 @@ public class PayslipController {
         final Payslips updatepayslip = payslipRepository.save(Payslips);
 
         return ResponseEntity.ok(updatepayslip);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long payslipId) throws
+            Exception {
+        Payslips payslip = payslipRepository.findById(payslipId).orElseThrow(() -> new ResourceNotFoundException("Payslip not found on: " + payslipId));
+        payslipRepository.delete(payslip);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

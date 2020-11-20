@@ -9,7 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -25,7 +27,16 @@ public class AttendanceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Attendances> getattendanceById(@PathVariable(value = "id") Long attendanceId) throws ResourceNotFoundException {
-        Attendances attendance = attendanceRepository.findById(attendanceId).orElseThrow(()->new ResourceNotFoundException("attendance not found on id: "+attendanceId));
+            Attendances attendance = attendanceRepository.findById(attendanceId).orElseThrow(()->new ResourceNotFoundException("attendance not found on id: "+attendanceId));
+        return ResponseEntity.ok().body(attendance);
+    }
+
+    @GetMapping("/datecheck/{dateCheck}")
+    public ResponseEntity<Attendances> getattendanceByDateCheck(@PathVariable(value = "dateCheck") Date dateCheck) throws ResourceNotFoundException {
+        Attendances attendance = attendanceRepository.findByDateCheck(dateCheck);
+        if(attendance==null){
+            return ResponseEntity.ok(null);
+        }
         return ResponseEntity.ok().body(attendance);
     }
 
@@ -95,5 +106,15 @@ public class AttendanceController {
         final Attendances updateattendance = attendanceRepository.save(Attendances);
 
         return ResponseEntity.ok(updateattendance);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long attendanceId) throws
+            Exception {
+        Attendances attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new ResourceNotFoundException("Attendances not found on: " + attendanceId));
+        attendanceRepository.delete(attendance);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

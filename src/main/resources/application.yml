@@ -1,0 +1,6 @@
+
+amazonProperties:
+  endpointUrl: https://hiepvu-bucket.s3-ap-southeast-1.amazonaws.com
+  accessKey: AKIA2N4EQDM2NRQNSOWG
+  secretKey: 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
+  bucketName: hiepvu-bucket

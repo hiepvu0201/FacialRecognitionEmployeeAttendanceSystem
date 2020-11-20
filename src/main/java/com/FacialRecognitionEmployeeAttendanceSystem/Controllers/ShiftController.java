@@ -1,5 +1,6 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 
+import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Roles;
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Shifts;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.ShiftRepository;
@@ -8,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -93,5 +96,15 @@ public class ShiftController {
         final Shifts updateshift = shiftRepository.save(Shifts);
 
         return ResponseEntity.ok(updateshift);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long shiftId) throws
+            Exception {
+        Shifts shift = shiftRepository.findById(shiftId).orElseThrow(() -> new ResourceNotFoundException("Shift not found on: " + shiftId));
+        shiftRepository.delete(shift);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -89,5 +91,15 @@ public class RoleController {
         final Roles updateRole = roleRepository.save(Roles);
 
         return ResponseEntity.ok(updateRole);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long roleId) throws
+            Exception {
+        Roles role = roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role not found on: " + roleId));
+        roleRepository.delete(role);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }

@@ -1,5 +1,6 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 
+import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Shifts;
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.DepartmentRepository;
@@ -10,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,13 +29,31 @@ public class UserController {
     private RoleRepository roleRepository;
 
     @GetMapping("/")
-    public List<Users> getAllRoles(){
+    public List<Users> getAllUsers(){
         return userRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Users> getRoleById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
+    public ResponseEntity<Users> getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
         Users user = userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("user not found on id: "+userId));
+        return ResponseEntity.ok().body(user);
+    }
+
+    @GetMapping("/pin/{pin}")
+    public ResponseEntity<Users> getUserByPin(@PathVariable(value = "pin") String userPin) throws ResourceNotFoundException {
+        Users user = userRepository.findByPin(userPin);
+        if(user==null){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok().body(user);
+    }
+
+    @GetMapping("/{imgUrl}")
+    public ResponseEntity<Users> getUserByImgPath(@PathVariable(value = "imgUrl") String userImgPath) throws ResourceNotFoundException {
+        Users user = userRepository.findByImgPath(userImgPath);
+        if(user==null){
+            return ResponseEntity.ok(null);
+        }
         return ResponseEntity.ok().body(user);
     }
 
@@ -105,7 +126,6 @@ public class UserController {
 
     @PutMapping("/enable/{id}")
     public ResponseEntity<Users> enable(@PathVariable(value = "id") Long userId) throws Exception{
-
         Users Users = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("user not found on:" + userId));
 
@@ -118,5 +138,15 @@ public class UserController {
         final Users updateUser = userRepository.save(Users);
 
         return ResponseEntity.ok(updateUser);
+    }
+    @DeleteMapping("/delete/{id}")
+    public Map<String, Boolean> delete(@PathVariable(value = "id") Long userId) throws
+            Exception {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found on: " + userId));
+        userRepository.delete(user);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }
