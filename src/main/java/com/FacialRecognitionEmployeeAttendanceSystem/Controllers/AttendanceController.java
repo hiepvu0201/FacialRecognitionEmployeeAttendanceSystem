@@ -1,8 +1,10 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Attendances;
+import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.AttendanceRepository;
+import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +21,9 @@ import java.util.Map;
 public class AttendanceController {
     @Autowired
     private AttendanceRepository attendanceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/")
     public List<Attendances> getAllAttendances(){
@@ -60,8 +65,8 @@ public class AttendanceController {
                 .orElseThrow(() -> new ResourceNotFoundException("This attendance not found on:" + attendanceId));
 
         boolean isDisabled = attendance.isDisabled();
-        if(isDisabled==false){
-            throw new Exception("This attendance has already been disabled!");
+        if(isDisabled==true){
+            throw new Exception("This attendance has been disabled!");
         }
 
         attendance.setDateCheck(attendanceDetails.getDateCheck());
@@ -116,5 +121,30 @@ public class AttendanceController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
         return response;
+    }
+
+    //Roll up
+    @PostMapping("/rollup")
+    public ResponseEntity<Attendances> rollup(@Validated @RequestBody Users givenUsers) throws Exception{
+
+        Users user = userRepository.findByFullName(givenUsers.getFullName());
+        if(user==null){
+            throw new Exception("User not found!");
+        }
+
+        Attendances attendances = attendanceRepository.findByUserId(user.getId());
+        if(attendances==null){
+            throw new Exception("Cannot find user as given name!");
+        }
+
+        boolean isDisabled = attendances.isDisabled();
+        if(isDisabled==true)
+        {
+            throw new Exception("attendance has been disabled!");
+        }
+        attendances.setStatus(true);
+        final Attendances updateattendance = attendanceRepository.save(attendances);
+
+        return ResponseEntity.ok(updateattendance);
     }
 }

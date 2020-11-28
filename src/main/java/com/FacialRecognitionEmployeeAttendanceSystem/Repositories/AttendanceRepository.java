@@ -11,4 +11,5 @@ import java.sql.Date;
 @CrossOrigin(origins = "*")
 public interface AttendanceRepository extends JpaRepository<Attendances, Long> {
     public Attendances findByDateCheck(Date dateCheck);
+    public Attendances findByUserId(long userId);
 }

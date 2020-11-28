@@ -139,6 +139,7 @@ public class UserController {
 
         return ResponseEntity.ok(updateUser);
     }
+
     @DeleteMapping("/delete/{id}")
     public Map<String, Boolean> delete(@PathVariable(value = "id") Long userId) throws
             Exception {
