@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ public class Attendances {
     @Column(name = "date_check", nullable = false)
     private Date dateCheck;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, columnDefinition = "bit default 1")
     private boolean status;
 
     @Lob
@@ -34,11 +33,13 @@ public class Attendances {
     private String note;
 
     @Column(name = "working_hours", nullable = false)
-    private int workingHours;
+    private float workingHours;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "checkin_at")
+    private LocalDateTime checkinAt;
+
+    @Column(name = "checkout_at")
+    private LocalDateTime checkoutAt;
 
     @Column(name = "is_disabled", columnDefinition = "bit default 0")
     private boolean isDisabled;
@@ -50,6 +51,10 @@ public class Attendances {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users")
     private Users users;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     public boolean getStatus() {
         return true;

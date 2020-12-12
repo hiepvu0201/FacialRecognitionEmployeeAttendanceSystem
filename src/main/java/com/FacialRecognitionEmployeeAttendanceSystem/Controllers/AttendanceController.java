@@ -1,7 +1,6 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Attendances;
-import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.AttendanceRepository;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.UserRepository;
@@ -46,15 +45,17 @@ public class AttendanceController {
     }
 
     @PostMapping("/add")
-    public Attendances create(@Validated @RequestBody Attendances Attendances) throws Exception{
-        Date dateCheck = Attendances.getDateCheck();
+    public Attendances create(@Validated @RequestBody Attendances attendances) throws Exception{
+        Date dateCheck = attendances.getDateCheck();
         if(dateCheck!=null&&!"".equals(dateCheck)){
             Attendances tempattendanceName = attendanceRepository.findByDateCheck(dateCheck);
             if(tempattendanceName!=null){
                 throw new Exception("attendance date check: "+dateCheck+" is already exist");
             }
         }
-        return attendanceRepository.save(Attendances);
+        attendances.setUsers(userRepository.findById(attendances.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
+        return attendanceRepository.save(attendances);
     }
 
     @PutMapping("/update/{id}")
@@ -124,26 +125,47 @@ public class AttendanceController {
     }
 
     //Roll up
-    @PostMapping("/rollup")
-    public ResponseEntity<Attendances> rollup(@Validated @RequestBody Users givenUsers) throws Exception{
-
-        Users user = userRepository.findByFullName(givenUsers.getFullName());
-        if(user==null){
-            throw new Exception("User not found!");
-        }
-
-        Attendances attendances = attendanceRepository.findByUserId(user.getId());
-        if(attendances==null){
-            throw new Exception("Cannot find user as given name!");
-        }
-
+    @PostMapping("/checkin")
+    public Attendances checkin(@Validated @RequestBody Attendances attendances) throws Exception{
         boolean isDisabled = attendances.isDisabled();
         if(isDisabled==true)
         {
-            throw new Exception("attendance has been disabled!");
+            throw new Exception("Attendance has been disabled!");
         }
-        attendances.setStatus(true);
-        final Attendances updateattendance = attendanceRepository.save(attendances);
+
+        Attendances tempattendanceName = attendanceRepository.findByDateCheck(attendances.getDateCheck());
+        if(tempattendanceName!=null) {
+            throw new Exception("User has already checked in!");
+        }
+        attendances.setUsers(userRepository.findById(attendances.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
+
+        return attendanceRepository.save(attendances);
+    }
+
+    @PutMapping("/checkout/{id}")
+    public ResponseEntity<Attendances> checkout(@PathVariable(value = "id") Long attendanceId,
+                                              @Validated @RequestBody Attendances attendanceDetails) throws Exception{
+
+        Attendances attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new ResourceNotFoundException("This attendance not found on:" + attendanceId));
+
+        boolean isDisabled = attendanceDetails.isDisabled();
+        if(isDisabled==true)
+        {
+            throw new Exception("Attendance has been disabled!");
+        }
+
+        Attendances tempattendanceName = attendanceRepository.findByDateCheck(attendanceDetails.getDateCheck());
+        if(tempattendanceName==null) {
+            throw new Exception("User has not checked in yet!");
+        }
+
+        attendance.setStatus(true);
+        attendance.setWorkingHours(attendanceDetails.getWorkingHours());
+        attendance.setCheckoutAt(attendanceDetails.getCheckoutAt());
+
+        final Attendances updateattendance = attendanceRepository.save(attendance);
 
         return ResponseEntity.ok(updateattendance);
     }

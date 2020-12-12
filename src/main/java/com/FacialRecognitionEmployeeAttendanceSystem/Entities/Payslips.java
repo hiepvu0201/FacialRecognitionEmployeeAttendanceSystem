@@ -1,5 +1,6 @@
 package com.FacialRecognitionEmployeeAttendanceSystem.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,4 +60,12 @@ public class Payslips {
 
     @Column(name = "is_disabled", columnDefinition = "bit default 0")
     private boolean isDisabled;
+
+    @Column(name = "role_id", nullable = false)
+    public long roleId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "roles")
+    private Roles roles;
 }
