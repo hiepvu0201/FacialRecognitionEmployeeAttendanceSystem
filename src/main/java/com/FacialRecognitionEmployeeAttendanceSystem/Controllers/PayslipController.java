@@ -4,6 +4,7 @@ import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Payslips;
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.PayslipRepository;
+import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,9 @@ import java.util.Map;
 public class PayslipController {
     @Autowired
     private PayslipRepository payslipRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/")
     public List<Payslips> getAllPayslips(){
@@ -41,6 +45,8 @@ public class PayslipController {
                 throw new Exception("payslip date check: "+daypay+" is already exist");
             }
         }
+        Payslips.setUsers(userRepository.findById(Payslips.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + Payslips.getUserId())));
         return payslipRepository.save(Payslips);
     }
 

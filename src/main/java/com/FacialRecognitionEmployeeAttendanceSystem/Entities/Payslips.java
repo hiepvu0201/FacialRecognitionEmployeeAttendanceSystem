@@ -61,11 +61,11 @@ public class Payslips {
     @Column(name = "is_disabled", columnDefinition = "bit default 0")
     private boolean isDisabled;
 
-    @Column(name = "role_id", nullable = false)
-    public long roleId;
+    @Column(name = "user_id", nullable = false)
+    public long userId;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "roles")
-    private Roles roles;
+    @JoinColumn(name = "users")
+    private Users users;
 }

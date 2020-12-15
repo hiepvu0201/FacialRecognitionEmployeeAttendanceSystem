@@ -39,6 +39,15 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    @GetMapping("/fullname/{fullName}")
+    public ResponseEntity<Users> getUserByFullName(@PathVariable(value = "fullName") String fullName) throws ResourceNotFoundException {
+        Users user = userRepository.findByFullName(fullName);
+        if(user==null){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok().body(user);
+    }
+
     @GetMapping("/pin/{pin}")
     public ResponseEntity<Users> getUserByPin(@PathVariable(value = "pin") String userPin) throws ResourceNotFoundException {
         Users user = userRepository.findByPin(userPin);
