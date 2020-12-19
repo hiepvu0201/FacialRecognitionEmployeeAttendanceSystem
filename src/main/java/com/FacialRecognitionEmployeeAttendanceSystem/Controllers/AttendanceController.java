@@ -36,8 +36,18 @@ public class AttendanceController {
     }
 
     @GetMapping("/datecheck/{dateCheck}")
-    public ResponseEntity<Attendances> getattendanceByDateCheck(@PathVariable(value = "dateCheck") Date dateCheck) throws ResourceNotFoundException {
-        Attendances attendance = attendanceRepository.findByDateCheck(dateCheck);
+    public ResponseEntity<List<Attendances>> getAllAttendanceByDateCheck(@PathVariable(value = "dateCheck") Date dateCheck) throws ResourceNotFoundException {
+        List<Attendances> attendance = attendanceRepository.findAllByDateCheck(dateCheck);
+        if(attendance==null){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok().body(attendance);
+    }
+
+    @GetMapping("/userId/dateCheck")
+    public ResponseEntity<Attendances> getAttendanceByDateCheckForUser(@PathVariable(value = "dateCheck") Date dateCheck,
+                                                                       @PathVariable(value = "userId") long userId) throws ResourceNotFoundException {
+        Attendances attendance = attendanceRepository.findByDateCheckAndUserId(dateCheck, userId);
         if(attendance==null){
             return ResponseEntity.ok(null);
         }
@@ -48,8 +58,8 @@ public class AttendanceController {
     public Attendances create(@Validated @RequestBody Attendances attendances) throws Exception{
         Date dateCheck = attendances.getDateCheck();
         if(dateCheck!=null&&!"".equals(dateCheck)){
-            Attendances tempattendanceName = attendanceRepository.findByDateCheck(dateCheck);
-            if(tempattendanceName!=null){
+            List<Attendances> tempListAttendances = attendanceRepository.findAllByDateCheck(dateCheck);
+            if(tempListAttendances!=null){
                 throw new Exception("attendance date check: "+dateCheck+" is already exist");
             }
         }
@@ -133,14 +143,14 @@ public class AttendanceController {
             throw new Exception("Attendance has been disabled!");
         }
 
-        Attendances tempattendanceName = attendanceRepository.findByDateCheck(attendances.getDateCheck());
-        if(tempattendanceName!=null) {
-            throw new Exception("User has already checked in!");
-        }
-        attendances.setUsers(userRepository.findById(attendances.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
+        List<Attendances> tempListAttendace = attendanceRepository.findAllByDateCheck(attendances.getDateCheck());
+        if(tempListAttendace==null) {
+            attendances.setUsers(userRepository.findById(attendances.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
 
-        return attendanceRepository.save(attendances);
+            return attendanceRepository.save(attendances);
+        }
+        return null;
     }
 
     @PutMapping("/checkout/{id}")
@@ -156,8 +166,8 @@ public class AttendanceController {
             throw new Exception("Attendance has been disabled!");
         }
 
-        Attendances tempattendanceName = attendanceRepository.findByDateCheck(attendanceDetails.getDateCheck());
-        if(tempattendanceName==null) {
+        List<Attendances> tempListAttendance = attendanceRepository.findAllByDateCheck(attendanceDetails.getDateCheck());
+        if(tempListAttendance.size()>0) {
             throw new Exception("User has not checked in yet!");
         }
 

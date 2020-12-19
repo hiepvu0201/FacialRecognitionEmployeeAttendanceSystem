@@ -36,6 +36,15 @@ public class PayslipController {
         return ResponseEntity.ok().body(payslip);
     }
 
+    @GetMapping("/datecheck/{dateTime}")
+    public ResponseEntity<List<Payslips>> getAllPayslipByPayDate(@PathVariable(value = "dateTime") Date payDate) throws Exception {
+        List<Payslips> payslip = payslipRepository.findAllByPayDate(payDate);
+        if (payslip==null){
+            throw new Exception("Payslip not found at date: "+payDate);
+        }
+        return ResponseEntity.ok().body(payslip);
+    }
+
     @PostMapping("/add")
     public Payslips create(@Validated @RequestBody Payslips Payslips) throws Exception{
         Date daypay = Payslips.getPayDate();

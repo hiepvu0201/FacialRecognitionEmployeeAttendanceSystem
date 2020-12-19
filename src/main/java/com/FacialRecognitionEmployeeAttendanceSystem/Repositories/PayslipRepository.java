@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.sql.Date;
+import java.util.List;
 
 @Repository
 @CrossOrigin(origins = "*")
 public interface PayslipRepository extends JpaRepository<Payslips, Long> {
-    public Payslips findByPayDate(Date day);
+    public Payslips findByPayDate(Date date);
+    public List<Payslips> findAllByPayDate(Date date);
 }
