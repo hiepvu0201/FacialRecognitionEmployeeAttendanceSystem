@@ -3,6 +3,7 @@ package com.FacialRecognitionEmployeeAttendanceSystem.Controllers;
 import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Attendances;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.AttendanceRepository;
+import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.ShiftRepository;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class AttendanceController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ShiftRepository shiftRepository;
 
     @GetMapping("/")
     public List<Attendances> getAllAttendances(){
@@ -63,6 +67,9 @@ public class AttendanceController {
                 throw new Exception("attendance date check: "+dateCheck+" is already exist");
             }
         }
+
+        attendances.setShifts(shiftRepository.findById(attendances.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + attendances.getShiftId())));
         attendances.setUsers(userRepository.findById(attendances.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
         return attendanceRepository.save(attendances);
@@ -84,6 +91,12 @@ public class AttendanceController {
         attendance.setStatus(attendanceDetails.getStatus());
         attendance.setNote(attendanceDetails.getNote());
         attendance.setWorkingHours(attendanceDetails.getWorkingHours());
+        attendance.setUserId(attendanceDetails.getUserId());
+        attendance.setShiftId(attendanceDetails.getShiftId());
+        attendance.setShifts(shiftRepository.findById(attendance.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + attendance.getShiftId())));
+        attendance.setUsers(userRepository.findById(attendance.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendance.getUserId())));
 
         final Attendances updateattendance = attendanceRepository.save(attendanceDetails);
 

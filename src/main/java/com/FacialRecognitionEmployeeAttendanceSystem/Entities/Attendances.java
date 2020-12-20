@@ -52,6 +52,14 @@ public class Attendances {
     @JoinColumn(name = "users")
     private Users users;
 
+    @Column(name = "shift_id", nullable = false)
+    public long shiftId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shifts")
+    private Shifts shifts;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;

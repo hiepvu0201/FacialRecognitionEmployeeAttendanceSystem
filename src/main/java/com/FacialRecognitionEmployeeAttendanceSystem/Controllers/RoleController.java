@@ -53,6 +53,7 @@ public class RoleController {
         role.setRoleName(roleDetails.getRoleName());
         role.setNote(roleDetails.getNote());
         role.setDescription(roleDetails.getDescription());
+        role.setSalaryRate(roleDetails.getSalaryRate());
 
         final Roles updateRole = roleRepository.save(roleDetails);
 
