@@ -27,9 +27,6 @@ public class Users {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "img_path", nullable = false)
-    private String imgPath;
-
     @Column(name = "pin", nullable = false, unique = true, length = 10)
     private String pin;
 

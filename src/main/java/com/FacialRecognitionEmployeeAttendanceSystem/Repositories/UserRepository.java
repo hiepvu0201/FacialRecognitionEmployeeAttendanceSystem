@@ -10,5 +10,4 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public interface UserRepository extends JpaRepository<Users, Long> {
     public Users findByFullName(String userName);
     public Users findByPin(String pin);
-    public Users findByImgPath(String imgPath);
 }

@@ -57,15 +57,6 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-    @GetMapping("/{imgUrl}")
-    public ResponseEntity<Users> getUserByImgPath(@PathVariable(value = "imgUrl") String userImgPath) throws ResourceNotFoundException {
-        Users user = userRepository.findByImgPath(userImgPath);
-        if(user==null){
-            return ResponseEntity.ok(null);
-        }
-        return ResponseEntity.ok().body(user);
-    }
-
     @PostMapping("/add")
     public Users create(@Validated @RequestBody Users users) throws Exception{
         String userFullName = users.getFullName();
@@ -97,7 +88,6 @@ public class UserController {
         }
 
         user.setFullName(userDetails.getFullName());
-        user.setImgPath(userDetails.getImgPath());
         user.setPin(userDetails.getPin());
         user.setDob(userDetails.getDob());
         user.setHomeAddress(userDetails.getHomeAddress());
