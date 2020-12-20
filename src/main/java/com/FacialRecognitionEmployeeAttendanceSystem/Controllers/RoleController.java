@@ -67,7 +67,7 @@ public class RoleController {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found on: " + roleId));
 
         boolean isDisabled = Roles.isDisabled();
-        if(isDisabled==true)
+        if(isDisabled)
         {
             throw new Exception("Role has already been disabled!");
         }
@@ -84,7 +84,7 @@ public class RoleController {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found on:" + roleId));
 
         boolean isDisabled = Roles.isDisabled();
-        if(isDisabled==false)
+        if(!isDisabled)
         {
             throw new Exception("Role has not been disabled yet!");
         }
