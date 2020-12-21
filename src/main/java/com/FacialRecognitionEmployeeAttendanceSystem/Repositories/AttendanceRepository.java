@@ -14,4 +14,5 @@ public interface AttendanceRepository extends JpaRepository<Attendances, Long> {
     public Attendances findByDateCheckAndUserId(Date dateCheck, long userId);
     public Attendances findByUserId(long userId);
     public List<Attendances> findAllByDateCheck(Date dateCheck);
+    public List<Attendances> findAllByUserId(long userId);
 }

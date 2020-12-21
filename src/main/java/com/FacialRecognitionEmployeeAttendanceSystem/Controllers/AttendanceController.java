@@ -48,7 +48,7 @@ public class AttendanceController {
         return ResponseEntity.ok().body(attendance);
     }
 
-    @GetMapping("/userId/dateCheck")
+    @GetMapping("/userId/{userId}/dateCheck/{dateCheck}")
     public ResponseEntity<Attendances> getAttendanceByDateCheckForUser(@PathVariable(value = "dateCheck") Date dateCheck,
                                                                        @PathVariable(value = "userId") long userId) throws ResourceNotFoundException {
         Attendances attendance = attendanceRepository.findByDateCheckAndUserId(dateCheck, userId);
@@ -56,6 +56,15 @@ public class AttendanceController {
             return ResponseEntity.ok(null);
         }
         return ResponseEntity.ok().body(attendance);
+    }
+
+    @GetMapping("/userId/{userId}")
+    public ResponseEntity<List<Attendances>> getAttendanceByUserId(@PathVariable(value = "userId") long userId) throws ResourceNotFoundException {
+        List<Attendances> listAttendance = attendanceRepository.findAllByUserId(userId);
+        if(listAttendance==null||listAttendance.size()<=0){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok().body(listAttendance);
     }
 
     @PostMapping("/add")
