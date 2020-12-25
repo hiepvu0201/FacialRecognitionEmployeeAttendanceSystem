@@ -48,17 +48,17 @@ public class AttendanceController {
         return ResponseEntity.ok().body(attendance);
     }
 
-    @GetMapping("/userId/{userId}/dateCheck/{dateCheck}")
-    public ResponseEntity<Attendances> getAttendanceByDateCheckForUser(@PathVariable(value = "dateCheck") Date dateCheck,
+    @GetMapping("/userid/{userId}/datecheck/{dateCheck}")
+    public ResponseEntity<List<Attendances>> getAttendanceByDateCheckForUser(@PathVariable(value = "dateCheck") Date dateCheck,
                                                                        @PathVariable(value = "userId") long userId) throws ResourceNotFoundException {
-        Attendances attendance = attendanceRepository.findByDateCheckAndUserId(dateCheck, userId);
-        if(attendance==null){
+        List<Attendances> listAttendance = attendanceRepository.findAllByDateCheckAndUserId(dateCheck, userId);
+        if(listAttendance==null||listAttendance.size()<=0){
             return ResponseEntity.ok(null);
         }
-        return ResponseEntity.ok().body(attendance);
+        return ResponseEntity.ok().body(listAttendance);
     }
 
-    @GetMapping("/userId/{userId}")
+    @GetMapping("/userid/{userId}")
     public ResponseEntity<List<Attendances>> getAttendanceByUserId(@PathVariable(value = "userId") long userId) throws ResourceNotFoundException {
         List<Attendances> listAttendance = attendanceRepository.findAllByUserId(userId);
         if(listAttendance==null||listAttendance.size()<=0){
@@ -69,16 +69,6 @@ public class AttendanceController {
 
     @PostMapping("/add")
     public Attendances create(@Validated @RequestBody Attendances attendances) throws Exception{
-        Date dateCheck = attendances.getDateCheck();
-        if(dateCheck!=null&&!"".equals(dateCheck)){
-            List<Attendances> tempListAttendances = attendanceRepository.findAllByDateCheck(dateCheck);
-            if(tempListAttendances!=null){
-                throw new Exception("attendance date check: "+dateCheck+" is already exist");
-            }
-        }
-
-        attendances.setShifts(shiftRepository.findById(attendances.getShiftId())
-                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + attendances.getShiftId())));
         attendances.setUsers(userRepository.findById(attendances.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
         return attendanceRepository.save(attendances);
@@ -101,13 +91,9 @@ public class AttendanceController {
         attendance.setNote(attendanceDetails.getNote());
         attendance.setWorkingHours(attendanceDetails.getWorkingHours());
         attendance.setUserId(attendanceDetails.getUserId());
-        attendance.setShiftId(attendanceDetails.getShiftId());
-        attendance.setShifts(shiftRepository.findById(attendance.getShiftId())
-                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + attendance.getShiftId())));
         attendance.setUsers(userRepository.findById(attendance.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendance.getUserId())));
-
-        final Attendances updateattendance = attendanceRepository.save(attendanceDetails);
+        final Attendances updateattendance = attendanceRepository.save(attendance);
 
         return ResponseEntity.ok(updateattendance);
     }
@@ -156,7 +142,7 @@ public class AttendanceController {
         return response;
     }
 
-    //Roll up
+    //Check in
     @PostMapping("/checkin")
     public Attendances checkin(@Validated @RequestBody Attendances attendances) throws Exception{
         boolean isDisabled = attendances.isDisabled();
@@ -164,17 +150,12 @@ public class AttendanceController {
         {
             throw new Exception("Attendance has been disabled!");
         }
-
-        List<Attendances> tempListAttendace = attendanceRepository.findAllByDateCheck(attendances.getDateCheck());
-        if(tempListAttendace==null) {
-            attendances.setUsers(userRepository.findById(attendances.getUserId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
-
-            return attendanceRepository.save(attendances);
-        }
-        return null;
+        attendances.setUsers(userRepository.findById(attendances.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + attendances.getUserId())));
+        return attendanceRepository.save(attendances);
     }
 
+    //Check out
     @PutMapping("/checkout/{id}")
     public ResponseEntity<Attendances> checkout(@PathVariable(value = "id") Long attendanceId,
                                               @Validated @RequestBody Attendances attendanceDetails) throws Exception{
@@ -189,7 +170,7 @@ public class AttendanceController {
         }
 
         List<Attendances> tempListAttendance = attendanceRepository.findAllByDateCheck(attendanceDetails.getDateCheck());
-        if(tempListAttendance.size()>0) {
+        if(tempListAttendance.size()<=0) {
             throw new Exception("User has not checked in yet!");
         }
 

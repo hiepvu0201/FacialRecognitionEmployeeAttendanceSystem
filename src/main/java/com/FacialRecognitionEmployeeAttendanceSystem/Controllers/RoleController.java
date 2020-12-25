@@ -53,9 +53,9 @@ public class RoleController {
         role.setRoleName(roleDetails.getRoleName());
         role.setNote(roleDetails.getNote());
         role.setDescription(roleDetails.getDescription());
-        role.setSalaryRate(roleDetails.getSalaryRate());
+        role.setFixedSalary(roleDetails.getFixedSalary());
 
-        final Roles updateRole = roleRepository.save(roleDetails);
+        final Roles updateRole = roleRepository.save(role);
 
         return ResponseEntity.ok(updateRole);
     }

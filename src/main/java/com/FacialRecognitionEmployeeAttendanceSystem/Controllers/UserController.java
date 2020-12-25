@@ -5,6 +5,7 @@ import com.FacialRecognitionEmployeeAttendanceSystem.Entities.Users;
 import com.FacialRecognitionEmployeeAttendanceSystem.Exceptions.ResourceNotFoundException;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.DepartmentRepository;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.RoleRepository;
+import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.ShiftRepository;
 import com.FacialRecognitionEmployeeAttendanceSystem.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private ShiftRepository shiftRepository;
 
     @GetMapping("/")
     public List<Users> getAllUsers(){
@@ -71,6 +75,8 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id " + users.getDepartmentId())));
         users.setRoles(roleRepository.findById(users.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id " + users.getRoleId())));
+        users.setShifts(shiftRepository.findById(users.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + users.getShiftId())));
 
         return userRepository.save(users);
     }
@@ -100,8 +106,11 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id " + user.getDepartmentId())));
         user.setRoles(roleRepository.findById(user.getRoleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id " + user.getRoleId())));
+        user.setShiftId(userDetails.getShiftId());
+        user.setShifts(shiftRepository.findById(user.getShiftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Shift not found with id " + user.getShiftId())));
 
-        final Users updateUser = userRepository.save(userDetails);
+        final Users updateUser = userRepository.save(user);
 
         return ResponseEntity.ok(updateUser);
     }

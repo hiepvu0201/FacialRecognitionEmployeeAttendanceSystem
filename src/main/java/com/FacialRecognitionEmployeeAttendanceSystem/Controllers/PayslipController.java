@@ -47,13 +47,6 @@ public class PayslipController {
 
     @PostMapping("/add")
     public Payslips create(@Validated @RequestBody Payslips Payslips) throws Exception{
-        Date daypay = Payslips.getPayDate();
-        if(daypay!=null&&!"".equals(daypay)){
-            Payslips temppayslipName = payslipRepository.findByPayDate(daypay);
-            if(temppayslipName!=null){
-                throw new Exception("payslip date check: "+daypay+" is already exist");
-            }
-        }
         Payslips.setUsers(userRepository.findById(Payslips.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + Payslips.getUserId())));
         return payslipRepository.save(Payslips);
@@ -82,7 +75,7 @@ public class PayslipController {
         payslip.setTax(payslipDetails.getTax());
         payslip.setDeductionSalary(payslipDetails.getDeductionSalary());
 
-        final Payslips updatepayslip = payslipRepository.save(payslipDetails);
+        final Payslips updatepayslip = payslipRepository.save(payslip);
 
         return ResponseEntity.ok(updatepayslip);
     }

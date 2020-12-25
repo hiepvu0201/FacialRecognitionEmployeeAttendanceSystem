@@ -67,7 +67,7 @@ public class DepartmentController {
         department.setShifts(shiftRepository.findById(departmentDetails.getShiftId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + departmentDetails.getShiftId())));
 
-        final Departments updatedepartment = departmentRepository.save(departmentDetails);
+        final Departments updatedepartment = departmentRepository.save(department);
 
         return ResponseEntity.ok(updatedepartment);
     }

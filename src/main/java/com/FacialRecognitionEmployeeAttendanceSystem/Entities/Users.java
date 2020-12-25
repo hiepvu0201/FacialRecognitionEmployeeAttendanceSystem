@@ -69,4 +69,12 @@ public class Users {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "roles")
     private Roles roles;
+
+    @Column(name = "shift_id", nullable = false)
+    public long shiftId;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shifts")
+    private Shifts shifts;
 }

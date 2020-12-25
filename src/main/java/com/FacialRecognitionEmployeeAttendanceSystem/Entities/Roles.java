@@ -32,8 +32,8 @@ public class Roles {
     @Column(name = "description", length=512)
     private String description;
 
-    @Column(name = "salary_rate", nullable = false, columnDefinition="Decimal(19,4)")
-    private double salaryRate;
+    @Column(name = "fixed_salary", nullable = false, columnDefinition="Decimal(19,4)")
+    private double fixedSalary;
 
     @CreationTimestamp
     @Column(name = "created_at")
