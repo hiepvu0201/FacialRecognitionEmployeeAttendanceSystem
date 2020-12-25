@@ -126,7 +126,7 @@ public class UserController {
         {
             throw new Exception("user has already been disabled!");
         }
-        Users.setDisabled(false);
+        Users.setDisabled(true);
         final Users updateUser = userRepository.save(Users);
 
         return ResponseEntity.ok(updateUser);
