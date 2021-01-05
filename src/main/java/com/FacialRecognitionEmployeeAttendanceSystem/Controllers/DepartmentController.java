@@ -58,7 +58,7 @@ public class DepartmentController {
                 .orElseThrow(() -> new ResourceNotFoundException("This department not found on:" + departmentId));
 
         boolean isDisabled = department.isDisabled();
-        if(isDisabled==false){
+        if(isDisabled==true){
             throw new Exception("This department has already been disabled!");
         }
 

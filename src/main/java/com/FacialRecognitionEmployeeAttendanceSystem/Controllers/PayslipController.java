@@ -60,7 +60,7 @@ public class PayslipController {
                 .orElseThrow(() -> new ResourceNotFoundException("This payslip not found on:" + payslipId));
 
         boolean isDisabled = payslip.isDisabled();
-        if(isDisabled==false){
+        if(isDisabled==true){
             throw new Exception("This payslip has already been disabled!");
         }
 
